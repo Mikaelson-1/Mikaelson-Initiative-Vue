@@ -37,6 +37,90 @@
       </div>
     </div>
 
+    <!-- SDG Goals Section -->
+    <section class="sdg-section" style="padding: 5rem 2rem; background: #ffffff;">
+      <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+        <h2 style="font-size: 2.5rem; font-weight: 800; color: #111827; margin-bottom: 1rem;">
+          Contributing to the UN Sustainable Development Goals
+        </h2>
+        <p style="font-size: 1.2rem; color: #6b7280; margin-bottom: 3rem;">
+          Our work directly aligns with and contributes to achieving these global goals
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 3rem;">
+          <!-- SDG 4: Quality Education -->
+          <div class="sdg-card" style="background: #ffffff; border: 2px solid #e5e7eb; border-radius: 16px; padding: 2rem; text-align: center; transition: all 0.3s ease; cursor: pointer;">
+            <div style="width: 120px; height: 120px; margin: 0 auto 1.5rem;">
+              <img src="/assets/sdg/sdg-4.png" 
+                   alt="SDG 4: Quality Education" 
+                   style="width: 100%; height: 100%; object-fit: contain;" />
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">SDG 4</h3>
+            <h4 style="font-size: 1rem; font-weight: 600; color: #c5192d; margin-bottom: 0.75rem;">Quality Education</h4>
+            <p style="font-size: 0.95rem; color: #6b7280; line-height: 1.6;">
+              Empowering students and educators with technology-driven learning solutions and productivity tools
+            </p>
+          </div>
+
+          <!-- SDG 8: Decent Work and Economic Growth -->
+          <div class="sdg-card" style="background: #ffffff; border: 2px solid #e5e7eb; border-radius: 16px; padding: 2rem; text-align: center; transition: all 0.3s ease; cursor: pointer;">
+            <div style="width: 120px; height: 120px; margin: 0 auto 1.5rem;">
+              <img src="/assets/sdg/sdg-8.png" 
+                   alt="SDG 8: Decent Work and Economic Growth" 
+                   style="width: 100%; height: 100%; object-fit: contain;" />
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">SDG 8</h3>
+            <h4 style="font-size: 1rem; font-weight: 600; color: #a21942; margin-bottom: 0.75rem;">Decent Work & Economic Growth</h4>
+            <p style="font-size: 0.95rem; color: #6b7280; line-height: 1.6;">
+              Creating opportunities for skill development and fostering entrepreneurship in African communities
+            </p>
+          </div>
+
+          <!-- SDG 9: Industry, Innovation and Infrastructure -->
+          <div class="sdg-card" style="background: #ffffff; border: 2px solid #e5e7eb; border-radius: 16px; padding: 2rem; text-align: center; transition: all 0.3s ease; cursor: pointer;">
+            <div style="width: 120px; height: 120px; margin: 0 auto 1.5rem;">
+              <img src="/assets/sdg/sdg-9.png" 
+                   alt="SDG 9: Industry, Innovation and Infrastructure" 
+                   style="width: 100%; height: 100%; object-fit: contain;" />
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">SDG 9</h3>
+            <h4 style="font-size: 1rem; font-weight: 600; color: #fd6925; margin-bottom: 0.75rem;">Industry, Innovation & Infrastructure</h4>
+            <p style="font-size: 0.95rem; color: #6b7280; line-height: 1.6;">
+              Building innovative technology solutions and digital infrastructure for sustainable development
+            </p>
+          </div>
+
+          <!-- SDG 11: Sustainable Cities and Communities -->
+          <div class="sdg-card" style="background: #ffffff; border: 2px solid #e5e7eb; border-radius: 16px; padding: 2rem; text-align: center; transition: all 0.3s ease; cursor: pointer;">
+            <div style="width: 120px; height: 120px; margin: 0 auto 1.5rem;">
+              <img src="/assets/sdg/sdg-11.png" 
+                   alt="SDG 11: Sustainable Cities and Communities" 
+                   style="width: 100%; height: 100%; object-fit: contain;" />
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">SDG 11</h3>
+            <h4 style="font-size: 1rem; font-weight: 600; color: #fd9d24; margin-bottom: 0.75rem;">Sustainable Cities & Communities</h4>
+            <p style="font-size: 0.95rem; color: #6b7280; line-height: 1.6;">
+              Fostering community collaboration and building sustainable, inclusive local ecosystems
+            </p>
+          </div>
+
+          <!-- SDG 17: Partnerships for the Goals -->
+          <div class="sdg-card" style="background: #ffffff; border: 2px solid #e5e7eb; border-radius: 16px; padding: 2rem; text-align: center; transition: all 0.3s ease; cursor: pointer;">
+            <div style="width: 120px; height: 120px; margin: 0 auto 1.5rem;">
+              <img src="/assets/sdg/sdg-17.png" 
+                   alt="SDG 17: Partnerships for the Goals" 
+                   style="width: 100%; height: 100%; object-fit: contain;" />
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">SDG 17</h3>
+            <h4 style="font-size: 1rem; font-weight: 600; color: #19486a; margin-bottom: 0.75rem;">Partnerships for the Goals</h4>
+            <p style="font-size: 0.95rem; color: #6b7280; line-height: 1.6;">
+              Building strategic partnerships with organizations, institutions, and communities for collective impact
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- About Organization Section -->
     <section class="about-organization" style="padding: 4rem 1rem; text-align: center; background: #f8fafc;">
       <div style="max-width: 1000px; margin: 0 auto; padding: 2.5rem; background: rgba(255,255,255,0.8); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 16px; backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: left;">
@@ -232,5 +316,26 @@ export default {
 .about-section {
   max-width: 1200px;
   margin: 0 auto 4rem auto;
+}
+
+/* SDG Cards Hover Effects */
+.sdg-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.sdg-card:hover {
+  transform: translateY(-8px);
+  border-color: #5ce1e6 !important;
+  box-shadow: 0 12px 32px rgba(92, 225, 230, 0.25) !important;
+}
+
+.sdg-card img {
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.sdg-card:hover img {
+  transform: scale(1.1);
 }
 </style>

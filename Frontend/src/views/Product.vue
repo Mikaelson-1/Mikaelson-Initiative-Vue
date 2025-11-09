@@ -155,35 +155,139 @@
 
     <!-- Products Grid -->
     <section class="products-section" ref="productsSection">
-      <div class="container">
-        <h2 class="section-title">Our Products</h2>
-        <div class="products-grid">
+      <div class="products-container">
+        <div class="products-header">
+          <h2 class="products-title">RIO Hub Solutions</h2>
+          <div class="search-filter">
+            <input 
+              type="text" 
+              v-model="searchQuery" 
+              placeholder="Search ecosystems..." 
+              class="search-input"
+            />
+          </div>
+        </div>
+
+        <div class="products-intro">
+          <p>
+            <strong>RIO Hub</strong> is an intelligent productivity platform designed to transform how communities track progress, build habits, and achieve goals. By combining real-time analytics, AI-driven insights, and collaborative accountability tools, RIO Hub empowers individuals and organizations across every industry to optimize their workflows and maximize their potential.
+          </p>
+          <p>
+            Whether you're in education, business, creative industries, or public service, RIO Hub adapts to your unique ecosystem—delivering personalized recommendations, actionable metrics, and the tools you need to drive meaningful improvement and sustainable success.
+          </p>
+        </div>
+        
+        <div class="products-grid-large">
           <div 
-            class="product-card" 
-            v-for="(product, index) in products" 
+            class="product-venue-card" 
+            v-for="(product, index) in filteredPaginatedProducts" 
             :key="product.id"
-            :class="{ 'card-visible': visibleCards.includes(index) }"
-            :style="{ animationDelay: `${index * 0.15}s` }"
-            @mouseenter="handleCardHover($event, index)"
-            @mousemove="handleCardMouseMove($event, index)"
-            @mouseleave="handleCardLeave(index)"
+            :class="[
+              'card-visible',
+              `card-${getProductColor(product.id)}`
+            ]"
+            :style="{ animationDelay: `${index * 0.1}s` }"
           >
-            <div class="card-glow"></div>
-            <div class="card-header">
-              <img :src="product.image" :alt="product.title" class="product-icon" />
-              <h3>{{ product.title }}</h3>
+            <div class="venue-visual">
+              <div class="venue-title-outline">{{ product.title }}</div>
+              <div class="venue-icon-large">{{ getProductIcon(product.id) }}</div>
+              <div class="venue-decoration"></div>
             </div>
-            <p class="product-description">{{ product.description }}</p>
-            <ul class="features-list">
-              <li v-for="feature in product.features" :key="feature">{{ feature }}</li>
-            </ul>
-            <router-link class="learn-more" to="/labs">
-              Learn More <i class="fas fa-arrow-right"></i>
-            </router-link>
+            
+            <div class="venue-footer">
+              <div class="venue-info">
+                <span class="venue-category">
+                  <i class="fas fa-tag"></i> {{ getProductCategory(product.id) }}
+                </span>
+              </div>
+              <button @click="openModal(product)" class="venue-btn">
+                Explore <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pagination Controls -->
+        <div class="pagination-controls" v-if="totalPages > 1">
+          <button class="nav-arrow" @click="prevPage" :disabled="currentPage === 1">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="page-dots">
+            <span 
+              v-for="page in totalPages" 
+              :key="page" 
+              :class="['dot', { active: currentPage === page }]"
+              @click="goToPage(page)"
+            ></span>
+          </div>
+          <button class="nav-arrow" @click="nextPage" :disabled="currentPage === totalPages">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- Product Modal -->
+    <transition name="modal-fade">
+      <div v-if="showModal" class="modal-overlay" @click="closeModal">
+        <div class="modal-container" @click.stop>
+          <button class="modal-close" @click="closeModal">
+            <i class="fas fa-times"></i>
+          </button>
+          
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-icon">{{ getProductIcon(selectedProduct?.id) }}</div>
+              <h2>{{ selectedProduct?.title }}</h2>
+              <span class="modal-category">{{ getProductCategory(selectedProduct?.id) }}</span>
+            </div>
+            
+            <div class="modal-body">
+              <!-- YouTube Video Section -->
+              <div class="modal-video">
+                <h3>See How It Works</h3>
+                <div class="video-container">
+                  <iframe 
+                    :src="getProductVideoUrl(selectedProduct?.id)" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              </div>
+
+              <h3>How RIO Hub Solves This</h3>
+              <p class="modal-description">{{ selectedProduct?.description }}</p>
+              
+              <div class="modal-features">
+                <h4>Key Features</h4>
+                <ul>
+                  <li v-for="feature in selectedProduct?.features" :key="feature">
+                    <i class="fas fa-check-circle"></i>
+                    {{ feature }}
+                  </li>
+                </ul>
+              </div>
+              
+              <div class="modal-solution">
+                <h4>The Solution</h4>
+                <p>{{ getProductSolution(selectedProduct?.id) }}</p>
+              </div>
+            </div>
+            
+            <div class="modal-footer">
+              <router-link to="/signup" class="modal-btn primary">
+                Get Started <i class="fas fa-arrow-right"></i>
+              </router-link>
+              <button @click="closeModal" class="modal-btn secondary">
+                Learn More
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+    </transition>
 
     <!-- How It Works -->
     <section class="how-it-works" ref="howItWorksSection">
@@ -229,57 +333,6 @@
             <div class="step-number">{{ index + 1 }}</div>
             <h4>{{ step.title }}</h4>
             <p>{{ step.description }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- RIO Hub Intro (follows hero) -->
-    <section class="rio-hub" aria-labelledby="rio-hub-heading" ref="rioHubSection">
-      <div class="container">
-        <!-- Animated background elements -->
-        <div class="hub-background">
-          <div class="floating-element" v-for="n in 5" :key="n" :style="{ animationDelay: `${n * 0.5}s` }"></div>
-        </div>
-        
-        <h2 id="rio-hub-heading" :class="{ 'fade-in-up': hubVisible }">RIO Hub — Redefining Productivity in Education</h2>
-
-        <div class="rio-copy" :class="{ 'content-visible': hubVisible }">
-          <div class="rio-feature-card">
-            <div class="feature-icon">📚</div>
-            <div class="feature-content">
-              <h3>For Students</h3>
-              <p>
-                RIO Hub monitors academic progress, study habits, assignment completion, and engagement, providing actionable insights to help students optimize their learning and achieve their goals.
-              </p>
-            </div>
-          </div>
-
-          <div class="rio-feature-card" style="animation-delay: 0.2s">
-            <div class="feature-icon">👨‍🏫</div>
-            <div class="feature-content">
-              <h3>For Educators</h3>
-              <p>
-                Evaluates educator effectiveness, highlighting which teaching methods are most impactful — enabling schools to identify and address gaps in instruction.
-              </p>
-            </div>
-          </div>
-
-          <div class="rio-feature-card" style="animation-delay: 0.4s">
-            <div class="feature-icon">🏫</div>
-            <div class="feature-content">
-              <h3>For Institutions</h3>
-              <p>
-                Collects anonymized, data-driven insights to help institutions make informed decisions about curriculum design, resource allocation, and student support programs.
-              </p>
-            </div>
-          </div>
-
-          <p class="rio-highlight" :class="{ 'highlight-visible': hubVisible }">🎯 Bridging the gap between teaching and learning outcomes — empowering the next generation of achievers.</p>
-
-          <div class="rio-ctas">
-            <router-link class="btn hub-explore" :to="{ name: 'ProductDetail', params: { id: 'hub' } }">Explore RIO Hub</router-link>
-            <router-link class="btn hub-waitlist" :to="{ name: 'Signup' }">Join the Waitlist</router-link>
           </div>
         </div>
       </div>
@@ -338,6 +391,11 @@ export default {
       visibleCards: [],
       visibleSteps: [],
       hubVisible: false,
+      currentPage: 1,
+      itemsPerPage: 4,
+      searchQuery: '',
+      showModal: false,
+      selectedProduct: null,
       steps: [
         {
           title: 'Choose Your Product',
@@ -354,11 +412,74 @@ export default {
       ],
       products: [
         {
-          id: 'hub',
-          title: 'RIO Hub',
+          id: 'hub-education',
+          title: 'RIO Hub for Education',
           description: 'Track academic progress, study habits, and engagement. Empower students and educators with data-driven insights for better learning outcomes.',
           image: '/assets/images/product-hub.svg',
           features: ['Student progress tracking', 'Educator effectiveness analytics', 'Institutional insights dashboard']
+        },
+        {
+          id: 'hub-corporate',
+          title: 'RIO Hub for Companies',
+          description: 'Boost workplace productivity and employee engagement. Track team performance, collaboration metrics, and professional development goals.',
+          image: '/assets/images/product-hub.svg',
+          features: ['Team productivity analytics', 'Employee engagement tracking', 'Performance insights dashboard']
+        },
+        {
+          id: 'hub-creators',
+          title: 'RIO Hub for Content Creators',
+          description: 'Manage content schedules, track creative output, and build consistent habits. Stay accountable to your audience and creative goals.',
+          image: '/assets/images/product-hub.svg',
+          features: ['Content calendar management', 'Creative habit tracking', 'Audience engagement metrics']
+        },
+        {
+          id: 'hub-developers',
+          title: 'RIO Hub for Developers',
+          description: 'Track coding habits, project milestones, and technical skill development. Build consistent development practices and collaborate effectively.',
+          image: '/assets/images/product-hub.svg',
+          features: ['Code contribution tracking', 'Project milestone management', 'Technical skill progression']
+        },
+        {
+          id: 'hub-startups',
+          title: 'RIO Hub for Startups',
+          description: 'Monitor innovation cycles, team productivity, and startup growth metrics. Foster a culture of accountability and rapid iteration.',
+          image: '/assets/images/product-hub.svg',
+          features: ['Sprint tracking', 'Team velocity metrics', 'Innovation pipeline management']
+        },
+        {
+          id: 'hub-government',
+          title: 'RIO Hub for Government',
+          description: 'Enhance public sector productivity and service delivery. Track project timelines, citizen engagement, and departmental performance.',
+          image: '/assets/images/product-hub.svg',
+          features: ['Project timeline tracking', 'Service delivery metrics', 'Departmental analytics']
+        },
+        {
+          id: 'hub-nonprofit',
+          title: 'RIO Hub for Nonprofits',
+          description: 'Maximize impact with volunteer management, program tracking, and donor engagement insights. Build sustainable community initiatives.',
+          image: '/assets/images/product-hub.svg',
+          features: ['Volunteer coordination', 'Program impact tracking', 'Donor engagement analytics']
+        },
+        {
+          id: 'hub-sports',
+          title: 'RIO Hub for Sports & Fitness',
+          description: 'Track training routines, athletic performance, and team coordination. Build winning habits and achieve fitness goals consistently.',
+          image: '/assets/images/product-hub.svg',
+          features: ['Training schedule management', 'Performance metrics tracking', 'Team coordination tools']
+        },
+        {
+          id: 'hub-creative',
+          title: 'RIO Hub for Creative Media',
+          description: 'Manage creative projects, track production workflows, and collaborate with teams. Deliver creative excellence on schedule.',
+          image: '/assets/images/product-hub.svg',
+          features: ['Production workflow tracking', 'Creative project management', 'Team collaboration tools']
+        },
+        {
+          id: 'hub-research',
+          title: 'RIO Hub for Research',
+          description: 'Track research milestones, manage academic collaborations, and monitor publication progress. Advance knowledge systematically.',
+          image: '/assets/images/product-hub.svg',
+          features: ['Research milestone tracking', 'Collaboration management', 'Publication progress monitoring']
         }
       ],
       animatedLines: [
@@ -386,6 +507,23 @@ export default {
   beforeUnmount() {
     if (this.observer) {
       this.observer.disconnect()
+    }
+  },
+  computed: {
+    filteredProducts() {
+      if (!this.searchQuery) return this.products
+      return this.products.filter(product => 
+        product.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(this.searchQuery.toLowerCase())
+      )
+    },
+    filteredPaginatedProducts() {
+      const start = (this.currentPage - 1) * this.itemsPerPage
+      const end = start + this.itemsPerPage
+      return this.filteredProducts.slice(start, end)
+    },
+    totalPages() {
+      return Math.ceil(this.filteredProducts.length / this.itemsPerPage)
     }
   },
   methods: {
@@ -429,7 +567,7 @@ export default {
               this.visibleFeatures = [0, 1, 2, 3]
             }
             if (entry.target === this.$refs.productsSection) {
-              this.visibleCards = [0]
+              this.visibleCards = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
             }
             if (entry.target === this.$refs.howItWorksSection) {
               this.visibleSteps = [0, 1, 2]
@@ -465,6 +603,119 @@ export default {
       if (cards[index]) {
         cards[index].classList.remove('card-hovered')
       }
+    },
+    getProductIcon(productId) {
+      const icons = {
+        'hub-education': '🎓',
+        'hub-corporate': '🏢',
+        'hub-creators': '🎬',
+        'hub-developers': '💻',
+        'hub-startups': '🚀',
+        'hub-government': '🏛️',
+        'hub-nonprofit': '🤝',
+        'hub-sports': '⚽',
+        'hub-creative': '🎨',
+        'hub-research': '🔬'
+      }
+      return icons[productId] || '📦'
+    },
+    getProductColor(productId) {
+      const colors = {
+        'hub-education': 'blue',
+        'hub-corporate': 'cyan',
+        'hub-creators': 'purple',
+        'hub-developers': 'green',
+        'hub-startups': 'orange',
+        'hub-government': 'red',
+        'hub-nonprofit': 'pink',
+        'hub-sports': 'teal',
+        'hub-creative': 'indigo',
+        'hub-research': 'violet'
+      }
+      return colors[productId] || 'blue'
+    },
+    getProductCategory(productId) {
+      const categories = {
+        'hub-education': 'Education & Learning',
+        'hub-corporate': 'Business & Enterprise',
+        'hub-creators': 'Content & Media',
+        'hub-developers': 'Technology & Dev',
+        'hub-startups': 'Innovation & Startups',
+        'hub-government': 'Public Sector',
+        'hub-nonprofit': 'Social Impact',
+        'hub-sports': 'Sports & Wellness',
+        'hub-creative': 'Creative Industries',
+        'hub-research': 'Research & Academia'
+      }
+      return categories[productId] || 'General'
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--
+        this.visibleCards = []
+        this.$nextTick(() => {
+          this.visibleCards = [0, 1, 2, 3]
+        })
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++
+        this.visibleCards = []
+        this.$nextTick(() => {
+          this.visibleCards = [0, 1, 2, 3]
+        })
+      }
+    },
+    goToPage(page) {
+      this.currentPage = page
+      this.visibleCards = []
+      this.$nextTick(() => {
+        this.visibleCards = [0, 1, 2, 3]
+      })
+    },
+    openModal(product) {
+      this.selectedProduct = product
+      this.showModal = true
+      document.body.style.overflow = 'hidden'
+    },
+    closeModal() {
+      this.showModal = false
+      this.selectedProduct = null
+      document.body.style.overflow = 'auto'
+    },
+    getProductSolution(productId) {
+      const solutions = {
+        'hub-education': 'RIO Hub for Education transforms learning environments by providing real-time analytics on student engagement, progress tracking, and personalized learning paths. Educators gain actionable insights to improve teaching effectiveness while students stay motivated through gamified challenges and peer accountability.',
+        'hub-corporate': 'RIO Hub for Companies revolutionizes workplace productivity by tracking team collaboration, project milestones, and employee wellness. Our AI-driven insights help managers identify bottlenecks, optimize workflows, and foster a culture of continuous improvement and accountability.',
+        'hub-creators': 'RIO Hub for Content Creators streamlines content production with intelligent scheduling, audience analytics, and creative habit tracking. Stay consistent with your content calendar while building sustainable creative practices that keep your audience engaged.',
+        'hub-developers': 'RIO Hub for Developers enhances coding productivity through commit tracking, project milestone management, and skill progression analytics. Build better coding habits, collaborate effectively with your team, and advance your technical expertise systematically.',
+        'hub-startups': 'RIO Hub for Startups accelerates innovation by tracking sprint velocity, team productivity, and product development cycles. Foster a culture of rapid iteration and accountability while maintaining clear visibility into your startup\'s growth metrics.',
+        'hub-government': 'RIO Hub for Government improves public sector efficiency through project timeline tracking, service delivery metrics, and departmental performance analytics. Enhance transparency, accountability, and citizen engagement with data-driven governance.',
+        'hub-nonprofit': 'RIO Hub for Nonprofits maximizes social impact through volunteer coordination, program effectiveness tracking, and donor engagement analytics. Build sustainable community initiatives with clear metrics that demonstrate your organization\'s impact.',
+        'hub-sports': 'RIO Hub for Sports & Fitness optimizes athletic performance through training schedule management, performance metrics tracking, and team coordination tools. Build winning habits, track progress, and achieve fitness goals with data-driven insights.',
+        'hub-creative': 'RIO Hub for Creative Media streamlines production workflows with project management, creative collaboration tools, and deadline tracking. Deliver creative excellence on schedule while maintaining team coordination and quality standards.',
+        'hub-research': 'RIO Hub for Research advances academic excellence through milestone tracking, collaboration management, and publication progress monitoring. Systematically advance knowledge while maintaining clear visibility into research outcomes and team contributions.'
+      }
+      return solutions[productId] || 'RIO Hub provides comprehensive productivity solutions tailored to your specific needs.'
+    },
+    getProductVideoUrl(productId) {
+      // YouTube video IDs for each product - replace with actual video IDs
+      const videoIds = {
+        'hub-education': 'dQw4w9WgXcQ',
+        'hub-corporate': 'dQw4w9WgXcQ',
+        'hub-creators': 'dQw4w9WgXcQ',
+        'hub-developers': 'dQw4w9WgXcQ',
+        'hub-startups': 'dQw4w9WgXcQ',
+        'hub-government': 'dQw4w9WgXcQ',
+        'hub-nonprofit': 'dQw4w9WgXcQ',
+        'hub-sports': 'dQw4w9WgXcQ',
+        'hub-creative': 'dQw4w9WgXcQ',
+        'hub-research': 'dQw4w9WgXcQ'
+      }
+      const videoId = videoIds[productId] || 'dQw4w9WgXcQ'
+      // Add autoplay=1 and mute=1 for autoplay to work in most browsers
+      return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0`
     }
   }
 }
@@ -744,23 +995,597 @@ export default {
   padding: 0 2rem;
 }
 
-/* Products Section */
+/* Products Section - Venue Style */
 .products-section {
-  padding: 8rem 2rem;
-  background: #f8fafc;
+  padding: 6rem 2rem;
+  background: #ffffff;
   position: relative;
+  min-height: 100vh;
 }
 
-.products-section::before {
-  content: '';
+.products-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.products-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.products-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+}
+
+.search-filter {
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-radius: 50px;
+  border: 2px solid #333;
+  background: #ffffff;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #5ce1e6;
+  box-shadow: 0 0 0 3px rgba(92, 225, 230, 0.1);
+}
+
+.products-intro {
+  max-width: 900px;
+  margin: 3rem auto;
+  text-align: center;
+}
+
+.products-intro p {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+
+.products-intro strong {
+  color: #5ce1e6;
+  font-weight: 700;
+}
+
+/* Products Grid - Large Venue Cards */
+.products-grid-large {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.product-venue-card {
+  background: #f5f5f5;
+  border-radius: 24px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+  transform: translateY(30px);
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-venue-card.card-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.product-venue-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.venue-visual {
+  position: relative;
+  height: 280px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.venue-title-outline {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.1);
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  line-height: 1.1;
+  max-width: 80%;
+  z-index: 1;
+}
+
+.venue-icon-large {
+  font-size: 8rem;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+}
+
+.venue-decoration {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 60%;
+  height: 60%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+  border-radius: 24px 0 0 0;
+}
+
+/* Color Variants */
+.card-blue .venue-visual {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.card-cyan .venue-visual {
+  background: linear-gradient(135deg, #5ce1e6, #06b6d4);
+}
+
+.card-purple .venue-visual {
+  background: linear-gradient(135deg, #a855f7, #9333ea);
+}
+
+.card-green .venue-visual {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.card-orange .venue-visual {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.card-red .venue-visual {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.card-pink .venue-visual {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+}
+
+.card-teal .venue-visual {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+}
+
+.card-indigo .venue-visual {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+}
+
+.card-violet .venue-visual {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.venue-footer {
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f5f5f5;
+  flex-grow: 1;
+}
+
+.venue-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.venue-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.venue-category i {
+  color: #5ce1e6;
+}
+
+.venue-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #1a1a1a;
+  color: #ffffff;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.venue-btn:hover {
+  background: #5ce1e6;
+  color: #000;
+  transform: translateX(4px);
+}
+
+/* Pagination Controls */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.nav-arrow {
+  background: #f3f4f6;
+  color: #111827;
+  border: 2px solid #e5e7eb;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1.2rem;
+}
+
+.nav-arrow:hover:not(:disabled) {
+  background: #5ce1e6;
+  color: #000;
+  transform: scale(1.1);
+}
+
+.nav-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.page-dots {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d1d5db;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dot:hover {
+  background: #5ce1e6;
+  transform: scale(1.2);
+}
+
+.dot.active {
+  background: #5ce1e6;
+  width: 32px;
+  border-radius: 6px;
+}
+
+/* Action Buttons */
+.products-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 4rem;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 2.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #5ce1e6, #3b82f6);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(92, 225, 230, 0.3);
+}
+
+.action-btn.primary:hover {
+  background: linear-gradient(135deg, #4ac5ca, #2563eb);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(92, 225, 230, 0.5);
+}
+
+.action-btn.secondary {
+  background: transparent;
+  color: #111827;
+  border: 2px solid #e5e7eb;
+}
+
+.action-btn.secondary:hover {
+  background: #f3f4f6;
+  border-color: #5ce1e6;
+  color: #5ce1e6;
+  transform: translateY(-4px);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 2rem;
+  backdrop-filter: blur(4px);
+}
+
+.modal-container {
+  background: #ffffff;
+  border-radius: 24px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideUp 0.3s ease-out;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: #f3f4f6;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 10;
+  color: #111827;
+  font-size: 1.2rem;
+}
+
+.modal-close:hover {
+  background: #5ce1e6;
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+.modal-content {
+  padding: 3rem 2.5rem;
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.modal-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+}
+
+.modal-category {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  color: #5ce1e6;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.modal-body {
+  margin-bottom: 2rem;
+}
+
+.modal-video {
+  margin-bottom: 2rem;
+}
+
+.modal-video h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.video-container iframe {
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(92, 225, 230, 0.1) 0%, transparent 70%);
-  pointer-events: none;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+}
+
+.modal-body h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.modal-body h4 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 1.5rem 0 0.75rem 0;
+}
+
+.modal-description {
+  color: #6b7280;
+  line-height: 1.7;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  color: #374151;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.modal-features li:last-child {
+  border-bottom: none;
+}
+
+.modal-features li i {
+  color: #5ce1e6;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.modal-solution {
+  background: linear-gradient(135deg, rgba(92, 225, 230, 0.1), rgba(59, 130, 246, 0.1));
+  padding: 1.5rem;
+  border-radius: 16px;
+  border-left: 4px solid #5ce1e6;
+  margin-top: 1.5rem;
+}
+
+.modal-solution p {
+  color: #374151;
+  line-height: 1.7;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 1rem;
+  padding-top: 2rem;
+  border-top: 2px solid #f3f4f6;
+}
+
+.modal-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-btn.primary {
+  background: linear-gradient(135deg, #5ce1e6, #3b82f6);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(92, 225, 230, 0.3);
+}
+
+.modal-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(92, 225, 230, 0.4);
+}
+
+.modal-btn.secondary {
+  background: transparent;
+  color: #111827;
+  border: 2px solid #e5e7eb;
+}
+
+.modal-btn.secondary:hover {
+  background: #f3f4f6;
+  border-color: #5ce1e6;
+  color: #5ce1e6;
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
 }
 
 .section-title {
@@ -784,9 +1609,10 @@ export default {
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
-  margin-top: 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .product-card {
@@ -795,9 +1621,14 @@ export default {
   padding: 2rem;
   border: 2px solid #e5e7eb;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
 }
 
 .product-card::before {
@@ -810,13 +1641,13 @@ export default {
 }
 
 .product-card:hover::before {
-  opacity: 1;
+  transform: scaleX(1);
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
   border-color: #5ce1e6;
-  box-shadow: 0 20px 60px rgba(92, 225, 230, 0.3);
+  box-shadow: 0 12px 32px rgba(92, 225, 230, 0.2);
+  transform: translateY(-8px);
 }
 
 .card-header {
@@ -839,31 +1670,35 @@ export default {
   font-size: 1.5rem;
   font-weight: 700;
   color: #111827;
-  margin: 0;
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
 }
 
 .product-description {
   color: #6b7280;
   margin-bottom: 1.5rem;
   line-height: 1.7;
-  font-size: 1rem;
+  font-size: 0.95rem;
   position: relative;
   z-index: 1;
+  flex-grow: 1;
 }
 
 .features-list {
   list-style: none;
   padding: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   position: relative;
   z-index: 1;
 }
 
 .features-list li {
-  padding: 0.75rem 0;
+  padding: 0.6rem 0;
   border-bottom: 1px solid #f3f4f6;
   color: #6b7280;
   transition: color 0.3s;
+  font-size: 0.9rem;
+  text-align: left;
 }
 
 .features-list li:hover {
@@ -992,6 +1827,23 @@ export default {
 .rio-copy {
   max-width: 900px;
   margin: 0 auto;
+}
+
+.rio-description {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.rio-description p {
+  font-size: 1.125rem;
+  line-height: 1.9;
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+
+.rio-description strong {
+  color: #5ce1e6;
+  font-weight: 700;
 }
 
 .rio-copy p {
@@ -1672,7 +2524,18 @@ export default {
   }
 }
 
-/* Responsive Design */
+/* Responsive Design - Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .products-section {
+    padding: 6rem 1.5rem;
+  }
+}
+
+/* Responsive Design - Mobile */
 @media (max-width: 768px) {
   .hero-box {
     padding: 4rem 1.5rem !important;
@@ -1693,6 +2556,10 @@ export default {
 
   .products-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .products-section {
+    padding: 4rem 1rem;
   }
 
   .steps {
