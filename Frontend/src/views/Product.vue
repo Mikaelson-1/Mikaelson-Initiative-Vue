@@ -412,6 +412,13 @@ export default {
       ],
       products: [
         {
+          id: 'rio-feed',
+          title: 'RIO Feed',
+          description: 'A social learning platform that transforms social engagement into a tool for growth. The Rio Feed curates personalized video content targeting specific areas where users are struggling, helping them improve in real time.',
+          image: '/assets/images/product-hub.svg',
+          features: ['Personalized learning feed', 'Short-form educational content', 'Real-time progress tracking', 'Social learning community']
+        },
+        {
           id: 'hub-education',
           title: 'RIO Hub for Education',
           description: 'Track academic progress, study habits, and engagement. Empower students and educators with data-driven insights for better learning outcomes.',
@@ -606,6 +613,7 @@ export default {
     },
     getProductIcon(productId) {
       const icons = {
+        'rio-feed': '📱',
         'hub-education': '🎓',
         'hub-corporate': '🏢',
         'hub-creators': '🎬',
