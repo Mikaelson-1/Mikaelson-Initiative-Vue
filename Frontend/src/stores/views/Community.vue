@@ -54,16 +54,10 @@
               </div>
             </div>
             <div class="hero-buttons">
-              <router-link to="/signup" class="mikaelson-button community-btn">
+              <router-link to="/waitlist" class="mikaelson-button community-btn">
                 <span class="button-text">Start Your Journey</span>
                 <span class="button-icon">
                   <i class="fas fa-arrow-right"></i>
-                </span>
-              </router-link>
-              <router-link to="/login" class="mikaelson-button labs-btn">
-                <span class="button-text">Sign In</span>
-                <span class="button-icon">
-                  <i class="fas fa-sign-in-alt"></i>
                 </span>
               </router-link>
             </div>

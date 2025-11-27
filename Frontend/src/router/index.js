@@ -11,6 +11,8 @@ const Rio = () => import('../views/Rio.vue')
 const Product = () => import('../views/Product.vue')
 const ProductDetail = () => import('../views/ProductDetail.vue')
 const Partnership = () => import('../views/Partnership.vue')
+const Admin = () => import('../views/Admin.vue')
+const Waitlist = () => import('../views/Waitlist.vue')
 
 // Auth / user related (stored under stores/views per current structure)
 const Login = () => import('../stores/views/Login.vue')
@@ -62,6 +64,8 @@ const routes = [
   { path: '/feed', name: 'MaintenanceFeed', component: Maintenance },
   { path: '/community/chapter/:id', name: 'ChapterDetail', component: ChapterDetail, props: true },
   { path: '/leaderboard', name: 'Leaderboard', component: Leaderboard },
+  { path: '/admin', name: 'Admin', component: Admin },
+  { path: '/waitlist', name: 'Waitlist', component: Waitlist },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
